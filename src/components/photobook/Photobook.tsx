@@ -33,6 +33,7 @@ import "swiper/css/pagination";
 import "swiper/css/effect-fade";
 import "swiper/css/mousewheel";
 import "./PhotobookSwiper.css";
+import type { Swiper as SwiperType } from "swiper";
 
 interface PhotobookProps {
   photobook: PhotobookType;
@@ -302,7 +303,7 @@ const Photobook: React.FC<PhotobookProps> = ({
     setIsInitialized(true);
   };
 
-  const handleSlideChange = (swiper: any) => {
+  const handleSlideChange = (swiper: SwiperType) => {
     if (displayMode === "spread") {
       setCurrentSpreadIndex(swiper.activeIndex);
     } else {

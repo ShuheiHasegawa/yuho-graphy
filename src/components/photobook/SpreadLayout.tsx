@@ -60,7 +60,7 @@ const SpreadLayout: React.FC<SpreadLayoutProps> = ({
   const rightPhotos: Photo[] = [];
 
   // 写真を振り分ける
-  let leftPhotoCount = spread.leftPageTemplate?.photoPositions.length || 0;
+  const leftPhotoCount = spread.leftPageTemplate?.photoPositions.length || 0;
 
   spread.photos.forEach((photo, index) => {
     if (index < leftPhotoCount) {

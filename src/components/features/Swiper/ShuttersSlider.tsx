@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import {
   Swiper as SwiperComponent,
   SwiperSlide,
@@ -43,24 +43,36 @@ export const ShuttersSlider: React.FC<ShuttersSliderProps> = ({
   const cursorDotRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const scrollHintRef = useRef<HTMLDivElement>(null);
-  const textRefs = useRef<(HTMLHeadingElement | null)[]>([]);
+  const textRefs = useRef<Array<HTMLHeadingElement | null>>([]);
   const swiperRef = useRef<SwiperRef>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [isScrolling, setIsScrolling] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
   const [hasNavigated, setHasNavigated] = useState(false);
-  const [shuffledSlides, setShuffledSlides] = useState<SlideData[]>([]);
+  const [shuffledSlides, setShuffledSlides] = useState<SlideData[]>([
+    ...slides,
+  ]);
   const [isShuffleEnabled, setIsShuffleEnabled] = useState(shuffleMode);
   const [showText, setShowText] = useState(showTextOverlay);
 
-  // シャッフル機能の初期化
+  // スライドをシャッフルする関数
+  const shuffleSlides = useCallback(() => {
+    const newSlides = [...slides];
+    for (let i = newSlides.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [newSlides[i], newSlides[j]] = [newSlides[j], newSlides[i]];
+    }
+    setShuffledSlides(newSlides);
+  }, [slides]);
+
+  // 初期化時にシャッフルモードが有効なら、スライドをシャッフル
   useEffect(() => {
     if (shuffleMode) {
       shuffleSlides();
     } else {
       setShuffledSlides([...slides]);
     }
-  }, [slides, shuffleMode]);
+  }, [slides, shuffleMode, shuffleSlides]);
 
   // シャッフルモードが変更された時の処理
   useEffect(() => {
@@ -70,7 +82,7 @@ export const ShuttersSlider: React.FC<ShuttersSliderProps> = ({
     } else {
       setShuffledSlides([...slides]);
     }
-  }, [shuffleMode, slides]);
+  }, [shuffleMode, slides, shuffleSlides]);
 
   // テキスト表示設定が変更された時の処理
   useEffect(() => {
@@ -78,16 +90,6 @@ export const ShuttersSlider: React.FC<ShuttersSliderProps> = ({
   }, [showTextOverlay]);
 
   // スライドをシャッフルする関数
-  const shuffleSlides = () => {
-    const newSlides = [...slides];
-    for (let i = newSlides.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [newSlides[i], newSlides[j]] = [newSlides[j], newSlides[i]];
-    }
-    setShuffledSlides(newSlides);
-  };
-
-  // シャッフルボタンのクリックハンドラ
   const handleShuffleToggle = () => {
     if (isShuffleEnabled) {
       // シャッフルを無効にする

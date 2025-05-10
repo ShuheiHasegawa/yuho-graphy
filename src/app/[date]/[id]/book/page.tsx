@@ -49,7 +49,7 @@ export default function BookPage() {
               id: `spread-${spreads.length + 1}`,
               leftPageTemplate: getTemplateById("single-large"),
               rightPageTemplate: getTemplateById("single-large"),
-              photos: spreadPhotos.map((photo, index) => ({
+              photos: spreadPhotos.map((photo) => ({
                 ...photo,
                 position: getTemplateById("single-large")?.photoPositions[0],
               })),

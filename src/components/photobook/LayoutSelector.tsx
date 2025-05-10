@@ -2,13 +2,8 @@
 
 import React, { useState } from "react";
 import { Modal, Tabs, Card, Button, Tag } from "antd";
-import {
-  LayoutTemplate,
-  LayoutCategory,
-  PhotobookUserPermission,
-} from "@/types/photobook";
+import { LayoutTemplate, PhotobookUserPermission } from "@/types/photobook";
 import { layoutCategories } from "@/constants/layoutTemplates";
-import Image from "next/image";
 
 const { TabPane } = Tabs;
 
