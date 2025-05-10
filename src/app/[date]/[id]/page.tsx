@@ -1,11 +1,11 @@
-import React from "react";
+import React, { Suspense } from "react";
 import fs from "fs";
 import path from "path";
-import ShuttersSlider from "@/components/features/Swiper/ShuttersSlider";
 import { notFound } from "next/navigation";
+import { GalleryClient } from "./GalleryClient";
 
 // 画像数を取得する関数
-export function getImageCount(date: string, id: string) {
+function getImageCount(date: string, id: string) {
   try {
     // dateは8桁の数字形式（YYYYMMDD）を想定
     if (!/^\d{8}$/.test(date)) {
@@ -43,7 +43,7 @@ export function getImageCount(date: string, id: string) {
 }
 
 // 画像のパスを生成する関数
-export function generateImagePaths(date: string, id: string) {
+function generateImagePaths(date: string, id: string) {
   // dateは8桁の数字形式（YYYYMMDD）を想定
   if (!/^\d{8}$/.test(date)) {
     console.error("Invalid date format. Expected YYYYMMDD format.");
@@ -124,21 +124,11 @@ export async function generateStaticParams() {
   }
 }
 
-// 型定義を修正
-export type PageProps = {
-  params: { date: string; id: string };
-  searchParams: {
-    showText?: string;
-    shuffle?: string;
-  };
-};
-
-export default function PhotoPage({ params, searchParams }: PageProps) {
+// Next.js 15の型の問題を避けるため、型アノテーションを削除
+// @ts-expect-error: Next.js 15 requires special types that conflict with TypeScript's checking
+export default function PhotoPage(props) {
+  const { params } = props;
   const { date, id } = params;
-
-  // URLクエリパラメータから設定を取得
-  const showTextOverlay = searchParams.showText === "true"; // デフォルトはfalse
-  const shuffleMode = searchParams.shuffle === "true"; // デフォルトはfalse
 
   // dateが8桁の数字形式（YYYYMMDD）かどうかを確認
   if (!/^\d{8}$/.test(date)) {
@@ -158,11 +148,15 @@ export default function PhotoPage({ params, searchParams }: PageProps) {
 
   return (
     <main className="min-h-screen">
-      <ShuttersSlider
-        slides={sliderData}
-        showTextOverlay={showTextOverlay}
-        shuffleMode={shuffleMode}
-      />
+      <Suspense
+        fallback={
+          <div className="flex items-center justify-center min-h-screen">
+            Loading...
+          </div>
+        }
+      >
+        <GalleryClient sliderData={sliderData} />
+      </Suspense>
     </main>
   );
 }

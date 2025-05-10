@@ -1,9 +1,9 @@
 "use client";
 
 import { Geist, Geist_Mono } from "next/font/google";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { AnimatePresence } from "framer-motion";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 import "./globals.css";
 import ClientCursor from "@/components/ui/client-cursor";
 import Header from "@/components/layout/header";
@@ -27,17 +27,39 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+// リアクティブな機能を分離したコンポーネント
+function ReactiveLoader({ children }: { children: React.ReactNode }) {
+  // ページ遷移を検知するためのパスの状態
+  const pathname = usePathname();
+  const [isLoading, setIsLoading] = useState(false);
+
+  // パスが変わった時にローディング表示を更新
+  useEffect(() => {
+    setIsLoading(true);
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [pathname]);
+
+  return (
+    <>
+      <AnimatePresence mode="wait">
+        {isLoading && <LoadingScreen />}
+      </AnimatePresence>
+      {children}
+    </>
+  );
+}
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-
-  // ページ遷移を検知するためのパスとクエリパラメータの状態
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
+  const [isFirstLoading, setIsFirstLoading] = useState(true);
 
   // メニューの状態に応じてスクロールを制御
   useEffect(() => {
@@ -71,23 +93,12 @@ export default function RootLayout({
   // 初回ロード時のローディング処理
   useEffect(() => {
     // 初回ロード時は、短いローディングを表示
-    setIsLoading(true);
     const timer = setTimeout(() => {
-      setIsLoading(false);
+      setIsFirstLoading(false);
     }, 1000); // 読み込み完了後、1秒待機して滑らかな遷移に
 
     return () => clearTimeout(timer);
   }, []);
-
-  // パスまたはクエリパラメータが変わった時にもローディング表示を更新
-  useEffect(() => {
-    setIsLoading(true);
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
-
-    return () => clearTimeout(timer);
-  }, [pathname, searchParams]);
 
   return (
     <html lang="ja">
@@ -99,14 +110,20 @@ export default function RootLayout({
         className={`${bubblegum.variable} ${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <AnimatePresence mode="wait">
-          {isLoading && <LoadingScreen />}
+          {isFirstLoading && <LoadingScreen />}
         </AnimatePresence>
 
         <Header menuOpen={menuOpen} setMenuOpen={setMenuOpen} />
         <AnimatePresence mode="wait">
           {menuOpen && <Menu setMenuOpen={setMenuOpen} />}
         </AnimatePresence>
-        <main>{children}</main>
+
+        <Suspense fallback={<LoadingScreen />}>
+          <ReactiveLoader>
+            <main>{children}</main>
+          </ReactiveLoader>
+        </Suspense>
+
         <ClientCursor />
       </body>
     </html>
