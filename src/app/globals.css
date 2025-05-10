@@ -1,0 +1,99 @@
+@import "tailwindcss";
+
+html,
+body {
+  cursor: none !important;
+}
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+  
+  /* カスタムカーソル用ファンタジーカラーパレット */
+  --fantasy-1: 210 100% 70%; /* 明るい青 */
+  --fantasy-2: 280 100% 75%; /* 薄紫 */
+  --fantasy-3: 320 100% 75%; /* ピンク */
+  --fantasy-4: 180 100% 75%; /* シアン */
+  --fantasy-5: 40 100% 75%;  /* 明るい黄色 */
+  
+  --primary: hsl(var(--fantasy-1)); /* プライマリーカラーをファンタジーカラーの1つに設定 */
+  --font-bubblegum: var(--font-bubblegum);
+  --font-geist-sans: var(--font-geist-sans);
+  --font-geist-mono: var(--font-geist-mono);
+
+  /* スクロールバー用のカスタムプロパティ */
+  --scrollbar-width: 4px;
+  --scrollbar-track-color: transparent;
+  --scrollbar-thumb-color: rgba(255, 255, 255, 0.2);
+  --scrollbar-thumb-hover-color: rgba(255, 255, 255, 0.3);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans);
+}
+
+/* すべての要素に対してカーソルを非表示に */
+* {
+  cursor: none !important;
+}
+
+/* カーソルの下にあるリンクや対話要素も明示的に非表示に */
+a, button, [role="button"], input, select, textarea, [data-cursor="pointer"] {
+  cursor: none !important;
+}
+
+/* カスタムスクロールバーのスタイル */
+::-webkit-scrollbar {
+  width: var(--scrollbar-width);
+  height: var(--scrollbar-width);
+}
+
+::-webkit-scrollbar-track {
+  background: var(--scrollbar-track-color);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb-color);
+  border-radius: var(--scrollbar-width);
+  transition: background-color 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover-color);
+}
+
+/* Firefox用のスクロールバースタイル */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb-color) var(--scrollbar-track-color);
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-bubblegum);
+  }
+
+  .font-disney {
+    font-family: var(--font-bubblegum);
+  }
+}
