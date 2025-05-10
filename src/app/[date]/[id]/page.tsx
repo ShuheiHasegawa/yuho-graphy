@@ -5,7 +5,7 @@ import ShuttersSlider from "@/components/features/Swiper/ShuttersSlider";
 import { notFound } from "next/navigation";
 
 // 画像数を取得する関数
-function getImageCount(date: string, id: string) {
+export function getImageCount(date: string, id: string) {
   try {
     // dateは8桁の数字形式（YYYYMMDD）を想定
     if (!/^\d{8}$/.test(date)) {
@@ -43,7 +43,7 @@ function getImageCount(date: string, id: string) {
 }
 
 // 画像のパスを生成する関数
-function generateImagePaths(date: string, id: string) {
+export function generateImagePaths(date: string, id: string) {
   // dateは8桁の数字形式（YYYYMMDD）を想定
   if (!/^\d{8}$/.test(date)) {
     console.error("Invalid date format. Expected YYYYMMDD format.");
@@ -85,19 +85,59 @@ function generateImagePaths(date: string, id: string) {
   });
 }
 
-interface PageProps {
+// 有効なルートパラメータを定義
+export async function generateStaticParams() {
+  // publicの下のimagesディレクトリをスキャンして可能なパスを取得する
+  // この実装はサンプルです。必要に応じて変更してください。
+  const basePath = path.join(process.cwd(), "public", "images");
+
+  try {
+    if (!fs.existsSync(basePath)) {
+      return [];
+    }
+
+    const dates = fs
+      .readdirSync(basePath)
+      .filter(
+        (date) =>
+          fs.statSync(path.join(basePath, date)).isDirectory() &&
+          /^\d{8}$/.test(date)
+      );
+
+    const params = [];
+
+    for (const date of dates) {
+      const datePath = path.join(basePath, date);
+      const ids = fs
+        .readdirSync(datePath)
+        .filter((id) => fs.statSync(path.join(datePath, id)).isDirectory());
+
+      for (const id of ids) {
+        params.push({ date, id });
+      }
+    }
+
+    return params;
+  } catch (error) {
+    console.error("Error generating static params:", error);
+    return [];
+  }
+}
+
+// 型定義を修正
+export type PageProps = {
   params: { date: string; id: string };
   searchParams: {
     showText?: string;
     shuffle?: string;
   };
-}
+};
 
 export default function PhotoPage({ params, searchParams }: PageProps) {
   const { date, id } = params;
 
   // URLクエリパラメータから設定を取得
-  const showTextOverlay = searchParams.showText !== "false"; // デフォルトはtrue
+  const showTextOverlay = searchParams.showText === "true"; // デフォルトはfalse
   const shuffleMode = searchParams.shuffle === "true"; // デフォルトはfalse
 
   // dateが8桁の数字形式（YYYYMMDD）かどうかを確認
