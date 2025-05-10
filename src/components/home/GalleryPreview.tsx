@@ -27,15 +27,27 @@ const getRandomImagesFromFolder = async (
   count: number = 1
 ): Promise<string[]> => {
   try {
-    const response = await fetch(`/api/images?folder=${folderPath}`);
+    const response = await fetch(
+      `/api/images?folder=${folderPath}&count=${count}`
+    );
+
+    if (!response.ok) {
+      console.error("API response not OK:", response.status);
+      return [`/images/${folderPath}/1.webp`]; // フォールバック画像
+    }
+
     const images = await response.json();
 
-    // ランダムに画像を選択
-    const shuffled = [...images].sort(() => 0.5 - Math.random());
-    return shuffled.slice(0, count);
+    // 画像が配列であることを確認
+    if (Array.isArray(images) && images.length > 0) {
+      return images;
+    } else {
+      console.warn("No images returned from API or invalid format");
+      return [`/images/${folderPath}/1.webp`]; // フォールバック画像
+    }
   } catch (error) {
     console.error("Error fetching images:", error);
-    return [];
+    return [`/images/${folderPath}/1.webp`]; // エラー時のフォールバック画像
   }
 };
 

@@ -2,7 +2,6 @@
 
 import React from "react";
 import dynamic from "next/dynamic";
-import Navigation from "@/components/home/Navigation";
 import Footer from "@/components/home/Footer";
 import Storybook from "@/components/home/storybook";
 
@@ -26,10 +25,8 @@ const GalleryPreview = dynamic(
 export default function Home() {
   return (
     <>
-      {/* <Navigation /> */}
       <main>
         <Storybook />
-        {/* <HeroSection /> */}
         <GalleryPreview />
       </main>
       <Footer />
