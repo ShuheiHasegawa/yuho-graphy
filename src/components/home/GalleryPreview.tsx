@@ -6,6 +6,8 @@ import Link from "next/link";
 import { motion, useScroll, useTransform } from "framer-motion";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import foldersData from "@/constants/folders.json";
+import { FolderInfo } from "@/types/folders";
 
 // GSAPプラグインの登録
 if (typeof window !== "undefined") {
@@ -18,6 +20,7 @@ interface GalleryItemData {
   date: string;
   imageSrc: string;
   link: string;
+  bookLink: string;
   description: string;
 }
 
@@ -88,13 +91,9 @@ const GalleryPreview = () => {
 
   useEffect(() => {
     const loadGalleryItems = async () => {
-      const folders = [
-        { path: "20240623/1", title: "Vol.1", date: "June 23, 2024" },
-        { path: "20240623/2", title: "Vol.2", date: "June 23, 2024" },
-      ];
-
+      // 型付きのフォルダデータを使用
       const items = await Promise.all(
-        folders.map(async (folder, index) => {
+        foldersData.map(async (folder: FolderInfo, index) => {
           const images = await getRandomImagesFromFolder(folder.path, 1);
           return {
             id: String(index + 1),
@@ -102,10 +101,8 @@ const GalleryPreview = () => {
             date: folder.date,
             imageSrc: images[0] || `/images/${folder.path}/1.webp`, // フォールバック画像
             link: `/${folder.path}`,
-            description:
-              index === 0
-                ? "A curated selection of moments captured in time"
-                : "Exploring light and shadow through visual storytelling",
+            bookLink: `/${folder.path}/book?max=${folder.maxImages}`, // max値を含む
+            description: folder.description,
           };
         })
       );
@@ -235,7 +232,7 @@ const GalleryPreview = () => {
 
                 {/* 本のアイコンリンク */}
                 <Link
-                  href={`${item.link}/book`}
+                  href={item.bookLink}
                   className="absolute bottom-6 right-6 p-3 bg-white/10 backdrop-blur-sm rounded-full hover:bg-white/20 transition-all duration-300 group z-20"
                 >
                   <motion.svg

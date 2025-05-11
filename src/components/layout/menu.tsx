@@ -213,19 +213,19 @@ export default function Menu({ setMenuOpen }: MenuProps) {
           </span>
         </motion.h2> */}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {menuItems.map((item) => (
+        <div className="space-y-6">
+          {/* ホーム項目を中央寄せで表示 */}
+          <div className="flex justify-center">
             <motion.div
-              key={item.href}
               variants={itemVariants}
-              className="relative"
+              className="relative w-full md:w-1/2 lg:w-1/3"
             >
-              <Link href={item.href} className="block">
+              <Link href={menuItems[0].href} className="block">
                 <motion.div
                   data-cursor="pointer"
                   onClick={() => handleItemClick()}
                   className={`w-full p-6 rounded-xl flex items-center gap-4 transition-all
-                    bg-gradient-to-br ${item.color} backdrop-blur-sm
+                    bg-gradient-to-br ${menuItems[0].color} backdrop-blur-sm
                     border border-white/10 hover:border-white/30
                     shadow-lg hover:shadow-2xl`}
                   whileHover={{
@@ -240,10 +240,10 @@ export default function Menu({ setMenuOpen }: MenuProps) {
                     whileHover={{ rotate: 360 }}
                     transition={{ duration: 0.8, ease: "easeInOut" }}
                   >
-                    {item.icon}
+                    {menuItems[0].icon}
                   </motion.div>
                   <span className="text-xl font-medium text-white">
-                    {item.name}
+                    {menuItems[0].name}
                   </span>
 
                   {/* ホバー時の装飾エフェクト */}
@@ -255,7 +255,57 @@ export default function Menu({ setMenuOpen }: MenuProps) {
                 </motion.div>
               </Link>
             </motion.div>
-          ))}
+          </div>
+
+          {/* 残りの項目を2列または3列のグリッドで表示 */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {menuItems.slice(1).map((item) => (
+              <motion.div
+                key={item.href}
+                variants={itemVariants}
+                className="relative"
+              >
+                <Link href={item.href} className="block">
+                  <motion.div
+                    data-cursor="pointer"
+                    onClick={() => handleItemClick()}
+                    className={`w-full p-6 rounded-xl flex items-center gap-4 transition-all
+                      bg-gradient-to-br ${item.color} backdrop-blur-sm
+                      border border-white/10 hover:border-white/30
+                      shadow-lg hover:shadow-2xl`}
+                    whileHover={{
+                      scale: 1.05,
+                      y: -8,
+                      transition: {
+                        type: "spring",
+                        stiffness: 400,
+                        damping: 10,
+                      },
+                    }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    <motion.div
+                      className="rounded-full bg-white/10 p-3 backdrop-blur-sm"
+                      whileHover={{ rotate: 360 }}
+                      transition={{ duration: 0.8, ease: "easeInOut" }}
+                    >
+                      {item.icon}
+                    </motion.div>
+                    <span className="text-xl font-medium text-white">
+                      {item.name}
+                    </span>
+
+                    {/* ホバー時の装飾エフェクト */}
+                    <motion.div
+                      className="absolute inset-0 rounded-xl bg-gradient-to-br from-white/10 to-white/0 pointer-events-none"
+                      initial={{ opacity: 0 }}
+                      whileHover={{ opacity: 1 }}
+                    />
+                  </motion.div>
+                </Link>
+              </motion.div>
+            ))}
+          </div>
         </div>
 
         {/* <motion.div className="mt-16 text-center" variants={itemVariants}>

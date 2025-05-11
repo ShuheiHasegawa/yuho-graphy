@@ -22,6 +22,7 @@ import "swiper/css/effect-fade";
 import "swiper/css/mousewheel";
 import "./ShuttersSlider.css";
 import type { Swiper } from "swiper";
+import { ShuffleIcon, TypeIcon } from "lucide-react";
 
 interface SlideData {
   name: string;
@@ -348,28 +349,6 @@ export const ShuttersSlider: React.FC<ShuttersSliderProps> = ({
       <div className="custom-cursor" ref={cursorRef}></div>
       <div className="cursor-dot" ref={cursorDotRef}></div>
 
-      {/* コントロールボタン */}
-      <div className="slider-controls">
-        <button
-          className={`control-button ${isShuffleEnabled ? "active" : ""}`}
-          onClick={handleShuffleToggle}
-          title={
-            isShuffleEnabled
-              ? "シャッフルを無効にする"
-              : "シャッフルを有効にする"
-          }
-        >
-          🔀
-        </button>
-        <button
-          className={`control-button ${showText ? "active" : ""}`}
-          onClick={handleTextToggle}
-          title={showText ? "テキストを非表示" : "テキストを表示"}
-        >
-          {showText ? "Aa" : "A"}
-        </button>
-      </div>
-
       <SwiperComponent
         ref={swiperRef}
         grabCursor={false}
@@ -434,6 +413,28 @@ export const ShuttersSlider: React.FC<ShuttersSliderProps> = ({
         <span className="total">
           {shuffledSlides.length.toString().padStart(2, "0")}
         </span>
+      </div>
+
+      {/* コントロールボタン - 左下に配置 */}
+      <div className="slider-controls-bottom-left">
+        <button
+          className={`control-button ${isShuffleEnabled ? "active" : ""}`}
+          onClick={handleShuffleToggle}
+          title={
+            isShuffleEnabled
+              ? "シャッフルを無効にする"
+              : "シャッフルを有効にする"
+          }
+        >
+          <ShuffleIcon size={16} />
+        </button>
+        <button
+          className={`control-button ${showText ? "active" : ""}`}
+          onClick={handleTextToggle}
+          title={showText ? "テキストを非表示" : "テキストを表示"}
+        >
+          <TypeIcon size={16} />
+        </button>
       </div>
 
       <div
