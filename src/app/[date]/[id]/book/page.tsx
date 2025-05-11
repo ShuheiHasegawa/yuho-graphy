@@ -119,7 +119,7 @@ export default function BookPage() {
 
   return (
     <div className="h-screen w-full flex items-center justify-center bg-black">
-      <div className="w-full">
+      <div className="w-full pt-12">
         <Photobook photobook={photobook} />
       </div>
     </div>
